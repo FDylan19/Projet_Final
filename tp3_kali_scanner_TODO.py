@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
-TP3 - Mini Scanner
-
-- Menu simple (top100, -sV, custom)
-- Nmap requis (doit être installé)
-- Cible limitée à 127.0.0.1 (localhost)
-- Rapports horodatés dans ./reports/
-
-À FAIRE (4 TODO) :
-  1) timestamp()   → retourner AAAAMMJJ_HHMMSS
-  2) check_nmap()  → True si nmap est trouvé, sinon False
-  3) allowed_target(t) → autoriser seulement localhost/127.0.0.1/::1
-  4) options custom → .split() la chaîne saisie
+TP3 - Mini Scanner (version complétée)
 """
 
 import subprocess, os, datetime, shutil, sys
@@ -24,7 +13,8 @@ def ensure_reports_dir():
 
 def save_report(content, prefix="scan"):
     ensure_reports_dir()
-    name = f"{prefix}_{timestamp()}.txt"  # dépend de TODO-1
+    ts = timestamp()
+    name = f"{prefix}_{ts}.txt"
     path = os.path.join(REPORTS_DIR, name)
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
@@ -34,23 +24,29 @@ def run_nmap(args, target):
     cmd = ["nmap"] + args + [target]
     try:
         p = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        return p.stdout
+        output = p.stdout
+        if p.stderr:
+            output += f"\n[stderr]\n{p.stderr}"
+        return output
     except subprocess.CalledProcessError as e:
         return f"[ERREUR] nmap code {e.returncode}\n{e.stderr or ''}"
+    except FileNotFoundError:
+        return "[ERREUR] nmap introuvable dans le PATH."
 
-# --- TODOs à compléter ---
+# --- TODOs complétés ---
 
 def timestamp():
-    # TODO-1: retourner un horodatage AAAAMMJJ_HHMMSS (ex: 20251112_213000)
-    raise NotImplementedError("TODO-1")
+    # Format AAAAMMJJ_HHMMSS
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def check_nmap():
-    # TODO-2: retourner True si nmap est dans le PATH, sinon False (shutil.which)
-    raise NotImplementedError("TODO-2")
+    # Vérifie si nmap est présent dans le PATH
+    return shutil.which("nmap") is not None
 
 def allowed_target(t):
-    # TODO-3: autoriser STRICTEMENT '127.0.0.1', 'localhost' ou '::1'
-    raise NotImplementedError("TODO-3")
+    # Autoriser uniquement localhost
+    allowed = {"127.0.0.1", "localhost", "::1"}
+    return t in allowed
 
 # --- menu déjà fait ---
 def menu():
@@ -62,7 +58,7 @@ def menu():
     return input("Choix (1-4) : ").strip()
 
 def main():
-    if not check_nmap():  # dépend de TODO-2
+    if not check_nmap():
         print("nmap non trouvé. Installez nmap (ex: apt install nmap) et relancez.")
         sys.exit(1)
 
@@ -72,14 +68,15 @@ def main():
             print("Au revoir.")
             break
 
-        target = input("Cible (seulement 127.0.0.1) : ").strip()
-        if not allowed_target(target):  # dépend de TODO-3
-            print("Cible non autorisée. Utilisez uniquement 127.0.0.1 / localhost.")
+        target = input("Cible (127.0.0.1 / localhost / ::1) : ").strip()
+
+        if not allowed_target(target):
+            print("Cible non autorisée. Utilisez uniquement 127.0.0.1 / localhost / ::1.")
             continue
 
         if c == "1":
             out = run_nmap(["--top-ports", "100"], target)
-            path = save_report(out, "top100")  # dépend de TODO-1
+            path = save_report(out, "top100")
             print("Rapport créé :", path)
 
         elif c == "2":
@@ -88,16 +85,16 @@ def main():
             print("Rapport créé :", path)
 
         elif c == "3":
-            # TODO-4: lire la ligne d'options et la transformer en liste avec .split()
             line = input("Options nmap (ex: -p 1-1024 -sV) : ").strip()
             if not line:
                 print("Options vides — annulé.")
                 continue
-            # >>> remplacer la ligne suivante par la version TODO (.split())
-            raise NotImplementedError("TODO-4")
-            # out = run_nmap(options, target)
-            # path = save_report(out, "custom")
-            # print("Rapport créé :", path)
+
+            # Implémentation du scan personnalisé
+            options = line.split()
+            out = run_nmap(options, target)
+            path = save_report(out, "custom")
+            print("Rapport créé :", path)
 
         else:
             print("Choix invalide.")
