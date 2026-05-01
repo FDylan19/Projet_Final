@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 TP3 - Mini Scanner (version complétée)
+Abdel
 """
 
 import subprocess, os, datetime, shutil, sys
