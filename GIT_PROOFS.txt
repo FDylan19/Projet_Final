@@ -1,8 +1,21 @@
-=== git log --oneline --decorate -n 10 ===
-[COLLER ICI]
+d9815c7 feat: implémentation du menu interactif et scans de base
+c257662 feat: Copie du dossier du projet à compléter
+ce62965 Initial commit
+d9815c7 Dylan Tue Apr 28 16:51:08 2026 -0500 feat: implémentation du menu interactif et scans de base
+reports/custom_20260428_163150.txt
+reports/custom_20260428_164424.txt
+reports/sv_20260428_160401.txt
+reports/sv_20260428_164334.txt
+reports/top100_20260428_155622.txt
+reports/top100_20260428_164150.txt
+tp3_kali_scanner_TODO.py
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
 
-=== git show --name-only --pretty=format:"%h %an %ad %s" HEAD ===
-[COLLER ICI]
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   GIT_PROOFS.txt
 
-=== git status ===
-[COLLER ICI]
+no changes added to commit (use "git add" and/or "git commit -a")
